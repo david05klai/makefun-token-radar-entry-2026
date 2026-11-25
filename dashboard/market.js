@@ -15,7 +15,7 @@ function paintMarket() {
   const table = document.createElement('table');
   const head = document.createElement('thead');
   const headerRow = document.createElement('tr');
-  const columns = ['Protocol', 'Recorded ticker', 'Category', 'TVL', 'Recorded market cap'];
+  const columns = ['Protocol', 'Recorded ticker', 'Category', 'TVL', 'Recorded market cap', 'Cap / TVL'];
   for (const label of columns) {
     const heading = document.createElement('th');
     heading.textContent = label;
@@ -32,7 +32,8 @@ function paintMarket() {
       cell(protocol.symbol || 'Not recorded'),
       cell(protocol.category || 'Unclassified'),
       cell(money(protocol.tvl_usd)),
-      cell(money(protocol.mcap_usd), 'value')
+      cell(money(protocol.mcap_usd), 'value'),
+      cell(marketRatio(protocol.mcap_usd, protocol.tvl_usd))
     );
     body.append(row);
   }
@@ -42,6 +43,21 @@ function paintMarket() {
   if (selected.length === 0) {
     marketHost.textContent = 'No recorded market-cap data in this snapshot.';
   }
+}
+
+// A ratio is context, not a suggested valuation multiple: these projects differ.
+function marketRatio(capitalization, lockedValue) {
+  if (!Number.isFinite(capitalization) || !Number.isFinite(lockedValue)) {
+    return 'Unavailable';
+  }
+  if (lockedValue <= 0) {
+    return 'Unavailable';
+  }
+  const ratio = capitalization / lockedValue;
+  if (!Number.isFinite(ratio)) {
+    return 'Unavailable';
+  }
+  return `${ratio.toFixed(2)}×`;
 }
 
 marketMore.addEventListener('click', () => {
