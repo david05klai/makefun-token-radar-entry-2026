@@ -259,7 +259,7 @@ function farmSteps(p:any):string[] {
  const category=p.category||'Unclassified';
  const chain=(p.chains||[])[0]||'a supported network';
  return [
-  'Open '+p.name+'’s official docs and confirm the live domain, supported network ('+chain+') and current token status. The '+snapshot.as_of+' snapshot only says DefiLlama recorded no token. 5 minutes, $0.',
+  'Use the DeFiLlama profile link above to open the current record and its project website; confirm the official docs, supported network ('+chain+') and token status. This analysis still uses only the '+snapshot.as_of+' snapshot. 5 minutes, $0.',
   'Read the official Rewards, Points or Campaign terms. Note the end date, region rules, required assets, minimum balance and gas; count a route as $0 only when its published terms require no deposit or transaction. 5 minutes, $0.',
   'For '+category+': '+categoryAction(category)+' Keep this review read-only; if the only reward route needs capital, KYC, gas or spending permission, mark it capital-gated and stop. 10 minutes, $0.',
   'If the official terms document a free action, follow only that published step and save its dated confirmation. Otherwise, do not connect a wallet; note the source and check official notices once a week. 3 minutes, $0.'
