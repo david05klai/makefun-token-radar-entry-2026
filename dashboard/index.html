@@ -1,9 +1,95 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Atlas | Launch research</title><meta name="description" content="Explore a historical protocol snapshot and a transparent launch valuation model."><link rel="stylesheet" href="app.css"></head><body>
-<header><a class="brand" href="#">ATLAS<span> / launch research</span></a><div class="header-right">DefiLlama snapshot <strong id="date">Pending</strong></div></header>
-<main><section class="intro"><div><h1>Find the signal<br>before the token.</h1><p class="lede">A transparent, snapshot-based watchlist of protocols whose records do not show a token.</p></div><div class="intro-side"><span>Method 01 / 03</span><p>Value is a scenario, not a prediction. Verify token status and risks before taking action.</p><a href="#method">Read the methodology</a></div></section>
-<section class="workspace"><div class="section-head"><div><h2>Protocol radar</h2></div><div id="count" class="count">Loading snapshot</div></div>
-<div class="toolbar"><label class="search"><span>Search</span><input id="search" placeholder="Protocol, chain or category" autocomplete="off"></label><label>Coverage<select id="coverage"><option value="all">All records</option><option value="watch">Watchlist only</option><option value="early">Other records</option></select></label><label>Network<select id="chain"><option value="all">All networks</option></select></label></div>
-<div class="table-wrap"><table><thead><tr><th>Rank / protocol</th><th>Category</th><th>Network</th><th>TVL</th><th>7d change</th><th>Implied value</th><th></th></tr></thead><tbody id="rows"></tbody></table></div><div id="empty" hidden>No protocols match these filters.</div><button id="more" class="more">Show more protocols</button></section>
-<section class="workspace comparison"><div class="section-head"><div><h2>Recorded tokens</h2></div><div class="count">Separate from the launch radar</div></div><p class="detail-copy">Snapshot market caps are historical observations. These protocols are not ranked as launch candidates.</p><div id="live-list"></div><button id="live-more" class="more">More recorded tokens</button></section>
-<section id="method" class="method"><div><h2>A disciplined<br>starting point.</h2></div><div><p class="formula">TVL × 0.25 × maturity × growth</p><p>Maturity ranges from 0.65 to 1 over three years since tracking began. Growth is weekly TVL change clamped to −50% to +100%, divided by 250 and added to 1. Missing growth uses zero; unknown age uses 365 days.</p><p>The watchlist is supplied by the sealed snapshot; other records without a recorded symbol or CoinGecko ID are exploratory. The data is not proof that a token does not exist. There is no live data, investment advice, or promise of an airdrop.</p></div></section></main>
-<dialog id="detail"><div class="detail-head"><p class="label">Protocol brief</p><button id="close" aria-label="Close protocol details">Close ×</button></div><div id="detail-content"></div></dialog><noscript>This research dashboard requires JavaScript to display its offline dataset.</noscript><script src="../data.js"></script><script src="app.js"></script><script src="market.js"></script></body></html>
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Atlas | Pre-token research</title>
+  <meta name="description" content="An offline, evidence-labeled research board built from a frozen DeFi protocol snapshot.">
+  <link rel="stylesheet" href="app.css">
+</head>
+<body>
+<header>
+  <a class="brand" href="#">ATLAS<span> / pre-token research</span></a>
+  <div class="header-right">FROZEN SNAPSHOT <strong id="date">—</strong><a href="#method">Method</a></div>
+</header>
+<main>
+  <section class="intro">
+    <div class="intro-copy">
+      <p class="eyebrow">A valuation scenario, without launch odds</p>
+      <h1>What could a token<br>be worth <em>if issued?</em></h1>
+      <p class="lede">A transparent market-cap scenario from observed token peers, plus a zero-spend research plan for every candidate. Every number can be traced to the same frozen snapshot.</p>
+    </div>
+    <aside class="intro-note">
+      <span>READ THIS FIRST</span>
+      <p>“No token recorded” is not proof of token absence. Values are scenarios, not forecasts. No action here promises points, an airdrop or eligibility.</p>
+    </aside>
+  </section>
+  <section class="metrics-strip" id="metrics" aria-label="Snapshot coverage"></section>
+  <section class="workspace" id="radar">
+    <div class="section-head">
+      <div><p class="eyebrow">Ranked by modeled market cap</p><h2>The research board</h2></div>
+      <div id="count" class="count">Loading snapshot</div>
+    </div>
+    <div class="toolbar">
+      <label class="search"><span>Find a protocol</span><input id="search" placeholder="Name, slug, chain or category" autocomplete="off"></label>
+      <label>Source lane<select id="coverage"><option value="all">All candidates</option><option value="watch">Source watchlist</option><option value="discovery">Below-floor discovery</option></select></label>
+      <label>Network<select id="chain"><option value="all">All networks</option></select></label>
+      <label>Category<select id="category"><option value="all">All categories</option></select></label>
+      <label>View order<select id="sort"><option value="value">Scenario value</option><option value="tvl">TVL</option><option value="growth">7-day change</option><option value="age">Tracking age</option><option value="prevalence">Token-record share</option><option value="name">Protocol name</option></select></label>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Rank / protocol</th><th>Category</th><th>Networks</th><th>TVL</th><th>Scenario market cap</th><th>Token-record share</th><th>7d TVL</th><th></th></tr></thead>
+        <tbody id="rows"></tbody>
+      </table>
+    </div>
+    <div id="empty" class="empty" hidden>No candidate matches these filters.</div>
+    <button id="more" class="more">Show more protocols</button>
+  </section>
+  <section class="workspace audit">
+    <div class="section-head">
+      <div><p class="eyebrow">No protocol disappears silently</p><h2>Universe audit</h2></div>
+      <div id="audit-count" class="count">All snapshot rows</div>
+    </div>
+    <div id="audit-summary" class="audit-summary"></div>
+    <details class="audit-details">
+      <summary>Browse the classification of all protocols</summary>
+      <div class="toolbar audit-toolbar">
+        <label class="search"><span>Search the audit</span><input id="audit-search" placeholder="Protocol, slug or reason" autocomplete="off"></label>
+        <label>Decision<select id="audit-filter"><option value="all">All decisions</option><option value="watchlist">Source watchlist</option><option value="discovery">Discovery candidate</option><option value="lineage_review">Lineage review</option><option value="recorded_token">Token recorded</option><option value="excluded">Screened out</option></select></label>
+      </div>
+      <div class="table-wrap">
+        <table><thead><tr><th>Protocol</th><th>Category</th><th>TVL</th><th>Snapshot record</th><th>Why</th></tr></thead><tbody id="audit-rows"></tbody></table>
+      </div>
+      <div id="audit-empty" class="empty" hidden>No protocol matches this audit filter.</div>
+      <button id="audit-more" class="more">Show more audit rows</button>
+    </details>
+  </section>
+  <section class="workspace comparison">
+    <div class="section-head"><div><p class="eyebrow">Training observations, kept separate</p><h2>Recorded-token comparables</h2></div><div class="count">No candidate values are copied from these rows</div></div>
+    <p class="section-copy">The fitted curve learns the cross-sectional relationship between TVL and market cap. This table shows the observed protocols used as training comparables, not launch candidates.</p>
+    <div id="live-list"></div>
+    <button id="live-more" class="more">More comparables</button>
+  </section>
+  <section id="method" class="method">
+    <div><p class="eyebrow">Model card</p><h2>Keep only what<br>survives the split.</h2><p id="model-summary" class="model-summary"></p></div>
+    <div>
+      <p class="formula" id="formula">Loading model</p>
+      <p>Observed-token records with positive market cap and TVL train a robust log–log size curve. Expanding-window validation uses only older tracking cohorts to fit each fold and the next cohort to score it. The selection table compares the size curve with a fixed multiple, age and weekly-change terms, and a shrunken category adjustment.</p>
+      <div class="validation-wrap"><table><thead><tr><th>Candidate model</th><th>Out-of-fold n</th><th>Median factor error</th><th>Within 2×</th></tr></thead><tbody id="validation-rows"></tbody></table></div>
+      <p>Intervals use the 80th percentile absolute log residual across those folds. The snapshot has no issuance dates, launch outcomes or reward eligibility labels, so Atlas estimates no odds or timing. Token-record share is descriptive only.</p>
+      <p>Protocol records and market caps are historical as of <strong id="method-date"></strong>. Verify domains, token status and risks yourself. Every research step is budgeted at $0; skip any action requiring a transfer, signature or network fee.</p>
+    </div>
+  </section>
+  <footer><span>ATLAS / research, not a trade signal</span><span>One frozen source · offline page · no wallet actions</span></footer>
+</main>
+<dialog id="detail">
+  <div class="detail-head"><div><p class="label">Protocol brief</p><p class="eyebrow" id="detail-lane"></p></div><button id="close" aria-label="Close protocol details">Close ×</button></div>
+  <div id="detail-content"></div>
+</dialog>
+<noscript>This offline research dashboard needs JavaScript to display the snapshot.</noscript>
+<script src="../data.js"></script>
+<script src="app.js"></script>
+<script src="market.js"></script>
+</body>
+</html>
