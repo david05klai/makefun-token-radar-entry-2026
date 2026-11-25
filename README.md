@@ -6,6 +6,8 @@
 
 Evidence-fit launch-value scenarios from a sealed protocol snapshot, with uncertainty bands, historical validation, and a complete source-row audit. Built for make.fun's “Build the best token launch radar” bounty.
 
+![Atlas research board showing the sealed 2026-11-14 snapshot, 178 candidates and 128 token peers](screenshots/1-board.jpg)
+
 Atlas scans the competition's sealed DefiLlama snapshot and ranks protocols by a conditional market-cap scenario: what the snapshot's cross-sectional size curve implies if a token is issued. The task does not ask for launch odds or timing, so Atlas estimates neither.
 
 ## What it shows
