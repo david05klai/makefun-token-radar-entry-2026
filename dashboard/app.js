@@ -34,6 +34,43 @@ $('model-summary').textContent=modelName+' selected from '+stats.dated_comparabl
 const parameters=stats.model_parameters||{};
 const slope=parameters.slope;
 $('formula').textContent=slope==null?'Robust scenario fit · '+modelName:'ln(market cap) = intercept + '+Number(slope).toFixed(3)+' × ln(TVL)';
+$('hero-model').textContent=modelName;
+const leadScenario=data.rows[0];
+if(leadScenario){
+ $('signal-name').textContent=leadScenario.name;
+ $('signal-value').textContent=money(leadScenario.implied_value_usd);
+ $('signal-range').textContent=money(leadScenario.implied_low_usd)+'–'+money(leadScenario.implied_high_usd)+' · 80% residual interval';
+}
+function renderHeroChart(){
+ const peers=data.live.filter(row=>row.tvl_usd>0&&row.mcap_usd>0);
+ const scenarios=data.rows.slice(0,40).filter(row=>row.tvl_usd>0&&row.implied_value_usd>0);
+ const points=[...peers.map(row=>[Math.log(row.tvl_usd),Math.log(row.mcap_usd)]),...scenarios.map(row=>[Math.log(row.tvl_usd),Math.log(row.implied_value_usd)])];
+ if(!points.length)return;
+ const width=520,height=152,left=47,right=508,top=14,bottom=105;
+ const xMin=Math.min(...points.map(point=>point[0]))-.22,xMax=Math.max(...points.map(point=>point[0]))+.22;
+ const yMin=Math.min(...points.map(point=>point[1]))-.38,yMax=Math.max(...points.map(point=>point[1]))+.38;
+ const x=value=>left+(value-xMin)/(xMax-xMin)*(right-left);
+ const y=value=>bottom-(value-yMin)/(yMax-yMin)*(bottom-top);
+ const clamp=value=>Math.max(top,Math.min(bottom,value));
+ const xTicks=[0,.5,1].map(fraction=>xMin+(xMax-xMin)*fraction);
+ const yTicks=[0,1,2,3].map(index=>yMin+(yMax-yMin)*index/3);
+ const gridX=xTicks.map(value=>'<line class="chart-grid" x1="'+x(value)+'" y1="'+top+'" x2="'+x(value)+'" y2="'+bottom+'"/><text class="chart-label" x="'+x(value)+'" y="'+(bottom+13)+'" text-anchor="middle">'+escapeHtml(money(Math.exp(value)))+'</text>').join('');
+ const gridY=yTicks.map(value=>'<line class="chart-grid" x1="'+left+'" y1="'+y(value)+'" x2="'+right+'" y2="'+y(value)+'"/><text class="chart-label" x="'+(left-8)+'" y="'+(y(value)+3)+'" text-anchor="end">'+escapeHtml(money(Math.exp(value)))+'</text>').join('');
+ const fitSlope=Number(parameters.slope),fitIntercept=Number(parameters.intercept);
+ let fit='',band='';
+ if(Number.isFinite(fitSlope)&&Number.isFinite(fitIntercept)){
+  const xs=Array.from({length:28},(_,index)=>xMin+(xMax-xMin)*index/27);
+  fit='<path class="chart-fit" d="'+xs.map((value,index)=>(index?'L':'M')+x(value).toFixed(1)+' '+y(fitIntercept+fitSlope*value).toFixed(1)).join(' ')+'"/>';
+  const offset=Math.log(Math.max(1,Number(stats.interval_factor)||1));
+  const upper=xs.map(value=>x(value).toFixed(1)+','+clamp(y(fitIntercept+fitSlope*value+offset)).toFixed(1));
+  const lower=[...xs].reverse().map(value=>x(value).toFixed(1)+','+clamp(y(fitIntercept+fitSlope*value-offset)).toFixed(1));
+  band='<polygon class="chart-band" points="'+[...upper,...lower].join(' ')+'"/>';
+ }
+ const peerDots=peers.map(row=>'<circle class="peer-dot" cx="'+x(Math.log(row.tvl_usd)).toFixed(1)+'" cy="'+y(Math.log(row.mcap_usd)).toFixed(1)+'" r="2.6"/>').join('');
+ const candidateDots=scenarios.map(row=>'<circle class="candidate-dot" cx="'+x(Math.log(row.tvl_usd)).toFixed(1)+'" cy="'+y(Math.log(row.implied_value_usd)).toFixed(1)+'" r="3.2"><title>'+escapeHtml(row.name)+' · conditional '+escapeHtml(money(row.implied_value_usd))+'</title></circle>').join('');
+ $('hero-chart').innerHTML='<svg viewBox="0 0 '+width+' '+height+'" role="img" aria-label="Observed token peers and conditional candidate values plotted on logarithmic TVL and market-cap axes"><g>'+gridX+gridY+'<line class="chart-axis" x1="'+left+'" y1="'+bottom+'" x2="'+right+'" y2="'+bottom+'"/><line class="chart-axis" x1="'+left+'" y1="'+top+'" x2="'+left+'" y2="'+bottom+'"/><g>'+band+fit+peerDots+candidateDots+'</g><text class="chart-axis-title" x="'+((left+right)/2)+'" y="147" text-anchor="middle">TVL · LOG SCALE</text></g></svg><div class="chart-legend"><span><i class="legend-peer"></i>Observed token peer</span><span><i class="legend-candidate"></i>Candidate scenario</span><span><i class="legend-fit"></i>Robust fit</span></div>';
+}
+renderHeroChart();
 $('validation-rows').innerHTML=stats.validation.map(row=>{
  const selected=row.name===stats.selected_model;
  return '<tr class="'+(selected?'selected-model':'')+'"><td>'+escapeHtml(labelMap[row.name]||row.name)+(selected?' <span class="selected-tag">selected</span>':'')+'</td><td>'+Number(row.n).toLocaleString('en-US')+'</td><td>'+escapeHtml(row.median_factor_error)+'×</td><td>'+escapeHtml(row.within_2x_percent)+'%</td></tr>';

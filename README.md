@@ -11,6 +11,7 @@ Atlas scans the competition's sealed DefiLlama snapshot and ranks protocols by a
 ## What it shows
 
 - A ranked research board for every source-watchlist protocol and eligible below-floor discoveries.
+- A log-scale chart plots all 128 observed token peers, the top 40 candidate scenarios, the fitted size curve and its held-out residual band.
 - A line-by-line audit of all 758 source records, including recorded tokens, screened categories and high-TVL records omitted by the source watchlist whose parent link is unavailable in this snapshot.
 - A robust log-market-cap versus log-TVL curve fitted to 128 token records with positive market cap and TVL.
 - Expanding-window comparisons against a fixed multiple and variants that add age, weekly change or category residuals. Only the simplest size curve is kept when extra terms fail to improve out-of-fold error.
