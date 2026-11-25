@@ -36,7 +36,12 @@ const rows=candidates.map((p:any)=>{
 }).sort((a:any,b:any)=>b.implied_value_usd-a.implied_value_usd||a.slug.localeCompare(b.slug)).map((p:any,i:number)=>({...p,rank:i+1}));
 mkdirSync(out,{recursive:true});
 writeFileSync(join(out,'board.json'),JSON.stringify({rows}));
-writeFileSync(join(out,'data.js'),`window.RADAR=${JSON.stringify({as_of:snapshot.as_of,source:snapshot.source,rows})};`);
+const live=snapshot.protocols
+ .filter((p:any)=>(p.symbol||p.gecko_id)&&p.mcap_usd>0)
+ .sort((a:any,b:any)=>b.mcap_usd-a.mcap_usd)
+ .slice(0,100)
+ .map((p:any)=>({name:p.name,slug:p.slug,symbol:p.symbol,mcap_usd:p.mcap_usd,tvl_usd:p.tvl_usd,category:p.category,chains:p.chains}));
+writeFileSync(join(out,'data.js'),`window.RADAR=${JSON.stringify({as_of:snapshot.as_of,source:snapshot.source,rows,live})};`);
 cpSync(join(base,'dashboard'),join(out,'dashboard'),{recursive:true});
 cpSync(join(base,'screenshots'),join(out,'screenshots'),{recursive:true});
 writeFileSync(join(out,'dossier.json'),buildDossier(out,{text_max_bytes:65536}));
