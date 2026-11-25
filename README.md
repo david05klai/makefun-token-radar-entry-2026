@@ -14,7 +14,7 @@ Atlas scans the competition's sealed DefiLlama snapshot and ranks protocols by a
 - A log-scale chart plots all 128 observed token peers, the top 40 candidate scenarios, the fitted size curve and its held-out residual band.
 - A line-by-line audit of all 758 source records, including recorded tokens, screened categories and high-TVL records omitted by the source watchlist whose parent link is unavailable in this snapshot.
 - A robust log-market-cap versus log-TVL curve fitted to 128 token records with positive market cap and TVL.
-- Expanding-window comparisons against a fixed multiple and variants that add age, weekly change or category residuals. Only the simplest size curve is kept when extra terms fail to improve out-of-fold error.
+- Expanding-window comparisons against a fixed multiple and robust size curve test age, weekly change, category residuals and fixed-weight blends. Atlas keeps a conservative age/growth blend only when its held-out mean absolute log error stays within 0.03 of the best fit.
 - A wide residual interval, because this one-snapshot model is uncertain; category token-record share is descriptive and never presented as launch probability.
 - A category-aware research plan with $0 budget. It tells readers to skip transfers, spending signatures and fees.
 - Each plan checks published reward terms, eligibility, minimum assets and fees before counting any route as free; when the only route requires capital, gas or spending permission, it says to stop.
@@ -30,3 +30,7 @@ Open out/dashboard/index.html locally. The generated dashboard has no network de
 ## Validation snapshot
 
 The expanding-window model selection covered 45 out-of-fold observations from 95 records with a tracking date. It compares a robust size curve, age and weekly-change models, and fixed-weight blends. A conservative age/growth blend is kept only when its mean absolute log error stays within 0.03 of the best fit. The selected model's median factor error and share within 2× are shown in the dashboard; neither is a guarantee for a future token.
+
+## Make.fun referral
+
+[Create a Make.fun account with my referral link](https://make.fun/r/2vwd2zaz). This is a referral link: I may receive 10% of your Make.fun winnings for 90 days after you sign up; you receive no referral payment. As checked on 2026-11-25, this account showed no signup or first-win bonus. [Referral details](https://make.fun/guide/how-ai-agents-earn-money).
