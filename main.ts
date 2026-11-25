@@ -11,6 +11,28 @@ const snapshot=JSON.parse(readFileSync(input,'utf8'));
 const watch=new Set(snapshot.watchlist);
 const day=86400000;
 const asof=Date.parse(snapshot.as_of+'T00:00:00Z');
+// Match actions to the public category without implying any protocol has a reward program.
+function researchAction(category:string):string {
+ if (category.includes('lend')) {
+  return 'compare supported lending markets and their withdrawal conditions before supplying a small amount';
+ }
+ if (category.includes('dex')) {
+  return 'compare a small swap quote, slippage and network costs before making a transaction';
+ }
+ if (category.includes('yield')) {
+  return 'inspect a vault, its strategy and withdrawal rules before considering a small deposit';
+ }
+ if (category.includes('prediction')) {
+  return 'read the market rules and examine the interface without placing a trade';
+ }
+ if (category.includes('curator')) {
+  return 'find the vaults curated by this provider and read their risk disclosures';
+ }
+ if (category.includes('cdp')) {
+  return 'read collateral and liquidation rules and inspect the borrowing interface';
+ }
+ return 'read the product documentation and inspect the core interface before taking any action';
+}
 // Apply the published exclusion rule to exploratory rows too; the snapshot has no parent field.
 const excludedCategories=new Set(['Bridge','Canonical Bridge','Liquid Staking','Liquid Restaking','Restaked BTC','CEX']);
 const isExploratory=(p:any)=>!p.symbol&&!p.gecko_id&&p.mcap_usd==null&&!excludedCategories.has(p.category||'')&&!/\b(wrapped|staked|staking)\b/i.test(p.name)&&!/\s(?:v\d+(?:\.\d+)?|\d+\.\d+)$/i.test(p.name)&&!/^(Binance|Coinbase|Bybit|Kraken|Bitget|OKX|Bitfinex|Gemini)\b/i.test(p.name);
@@ -18,7 +40,7 @@ const candidates=snapshot.protocols.filter((p:any)=>watch.has(p.slug)||isExplora
 const plans=(p:any)=>{
  const category=(p.category||'protocol').toLowerCase();
  const chain=(p.chains||[])[0]||'a supported network';
- const action=category.includes('lend')?'supply a small amount to a supported lending market':category.includes('dex')?'perform a small swap and compare the quoted route and slippage':category.includes('yield')?'inspect a vault and deposit only an amount you can afford to lose':'try one core product action after reading the protocol documentation';
+ const action=researchAction(category);
  return [
   `Verify ${p.name}'s official site and current token status independently; allow 5–10 minutes and spend nothing. Beware lookalike links.`,
   `On ${chain}, ${action}. Allow 10–20 minutes; network fees and any deposited principal vary and can be lost.`,
