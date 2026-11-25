@@ -59,11 +59,14 @@ function getFeatures(p:any,fields:string[],impute:any):number[] {
 function fitHuber(rows:any[],fields:string[]):any {
  const rawAges=rows.map(ageDays).filter((v:any)=>v!=null);
  const rawGrowth=rows.map(p=>p.change_7d).filter((v:any)=>v!=null);
+ const imputedAge=median(rawAges.length?rawAges:[365]);
+ const imputedGrowth=median(rawGrowth.length?rawGrowth:[0]);
+ const clippedGrowth=(value:number)=>Math.max(-50,Math.min(100,value))/100;
  const impute={
-  age:median(rawAges.length?rawAges:[365]),
-  ageCenter:median(rows.map(p=>Math.log(1+Math.max(0,ageDays(p)??365)/365))),
-  growth:median(rawGrowth.length?rawGrowth:[0]),
-  growthCenter:median(rows.map(p=>Math.max(-50,Math.min(100,p.change_7d??0))/100))
+  age:imputedAge,
+  ageCenter:median(rows.map(p=>Math.log(1+Math.max(0,ageDays(p)??imputedAge)/365))),
+  growth:imputedGrowth,
+  growthCenter:median(rows.map(p=>clippedGrowth(p.change_7d??imputedGrowth)))
  };
  const x=rows.map(p=>[1,...getFeatures(p,fields,impute)]);
  const y=rows.map(logCap);
