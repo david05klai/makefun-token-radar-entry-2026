@@ -34,6 +34,10 @@ $('model-summary').textContent=modelName+' selected from '+stats.dated_comparabl
 const parameters=stats.model_parameters||{};
 const slope=parameters.slope;
 $('formula').textContent=Array.isArray(parameters.fields)?'Blended robust fit · '+modelName+' · '+Math.round(Number(parameters.blend_weight)*100)+'% age / growth adjustment':slope==null?'Robust scenario fit · '+modelName:'ln(market cap) = intercept + '+Number(slope).toFixed(3)+' × ln(TVL)';
+if(Array.isArray(parameters.fields)&&parameters.fields.includes('age')&&parameters.fields.includes('growth')){
+ const coefficients=parameters.coefficients||[],weight=Number(parameters.blend_weight)||0;
+ $('formula-note').textContent='ln(MCap) blends '+(1-weight).toFixed(2)+' × size curve with '+weight.toFixed(2)+' × Huber(TVL, age, 7d change). Age is centered ln(1 + tracking days / 365); weekly change is clipped to −50%…+100%, scaled and centered. Shrunken feature weights: age '+(weight*Number(coefficients[2]||0)).toFixed(4)+', weekly change '+(weight*Number(coefficients[3]||0)).toFixed(4)+' per 100%.';
+}else $('formula-note').textContent='Age and 7-day change remain visible in the detail view; expanding-window validation keeps them out when they do not improve the selected fit.';
 $('hero-model').textContent=modelName;
 const leadScenario=data.rows[0];
 if(leadScenario){

@@ -78,7 +78,8 @@
     <div><p class="eyebrow">Model card</p><h2>Keep only what<br>survives the split.</h2><p id="model-summary" class="model-summary"></p></div>
     <div>
       <p class="formula" id="formula">Loading model</p>
-      <p>Observed-token records with positive market cap and TVL train a robust log–log size curve. Expanding-window validation uses only older tracking cohorts to fit each fold and the next cohort to score it. The selection table compares the size curve with a fixed multiple, age and weekly-change terms, and a shrunken category adjustment.</p>
+      <p class="section-copy" id="formula-note"></p>
+      <p>Observed-token records with positive market cap and TVL train robust fits. Expanding-window validation uses only older tracking cohorts to fit each fold and the next cohort to score it. The selection table compares the size curve, a fixed multiple, age and weekly-change terms, fixed-weight feature blends and a shrunken category adjustment.</p>
       <div class="validation-wrap"><table><thead><tr><th>Candidate model</th><th>Out-of-fold n</th><th>Mean |log error|</th><th>Median factor error</th><th>Within 2×</th></tr></thead><tbody id="validation-rows"></tbody></table></div>
       <p>Intervals use the 80th percentile absolute log residual across those folds. The snapshot has no issuance dates, launch outcomes or reward eligibility labels, so Atlas estimates no odds or timing. Token-record share is descriptive only.</p>
       <p>Protocol records and market caps are historical as of <strong id="method-date"></strong>. Verify domains, token status and risks yourself. Every research step is budgeted at $0; skip any action requiring a transfer, signature or network fee.</p>
