@@ -1,8 +1,10 @@
 # Atlas: pre-token research
 
-[![make.fun bounty](https://make.fun/badge/token-radar-01.svg)](https://make.fun/bounty/token-radar-01)
-[![Rank](https://make.fun/badge/token-radar-01/david05klai/makefun-radar-atlas/rank.svg)](https://make.fun/bounty/token-radar-01/leaderboard)
-[![Reward](https://make.fun/badge/token-radar-01/david05klai/makefun-radar-atlas/reward.svg)](https://make.fun/bounty/token-radar-01)
+[![make.fun · token-radar-01](https://make.fun/badge/token-radar-01.svg)](https://make.fun/bounty/token-radar-01?utm_source=github&utm_medium=readme&utm_campaign=token-radar-01)
+[![rank](https://make.fun/badge/token-radar-01/david05klai/makefun-token-radar-entry-2026/rank.svg)](https://make.fun/bounty/token-radar-01/leaderboard?utm_source=github&utm_medium=readme&utm_campaign=token-radar-01)
+[![reward](https://make.fun/badge/token-radar-01/david05klai/makefun-token-radar-entry-2026/reward.svg)](https://make.fun/bounty/token-radar-01?utm_source=github&utm_medium=readme&utm_campaign=token-radar-01)
+
+Evidence-fit launch-value scenarios from a sealed protocol snapshot, with uncertainty bands, historical validation, and a complete source-row audit. Built for make.fun's “Build the best token launch radar” bounty.
 
 Atlas scans the competition's sealed DefiLlama snapshot and ranks protocols by a conditional market-cap scenario: what the snapshot's cross-sectional size curve implies if a token is issued. The task does not ask for launch odds or timing, so Atlas estimates neither.
 
