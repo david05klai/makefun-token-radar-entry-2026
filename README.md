@@ -29,4 +29,4 @@ Open out/dashboard/index.html locally. The generated dashboard has no network de
 
 ## Validation snapshot
 
-The expanding-window model selection covered 45 out-of-fold observations from 95 records with a tracking date. On those folds, the selected curve had a median absolute factor error of 2.8× and landed within 2× on 28.9% of observations. Those metrics are shown in the dashboard and are not a guarantee for a future token.
+The expanding-window model selection covered 45 out-of-fold observations from 95 records with a tracking date. It compares a robust size curve, age and weekly-change models, and fixed-weight blends. A conservative age/growth blend is kept only when its mean absolute log error stays within 0.03 of the best fit. The selected model's median factor error and share within 2× are shown in the dashboard; neither is a guarantee for a future token.

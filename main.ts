@@ -117,6 +117,27 @@ function fitModel(name:string,rows:any[]):any {
  if(name==='size_age')return fitHuber(rows,['tvl','age']);
  if(name==='size_growth')return fitHuber(rows,['tvl','growth']);
  if(name==='size_age_growth')return fitHuber(rows,['tvl','age','growth']);
+ const blends:any={
+  size_blend_growth_25:{fields:['tvl','growth'],weight:0.25},
+  size_blend_growth_50:{fields:['tvl','growth'],weight:0.50},
+  size_blend_age_growth_10:{fields:['tvl','age','growth'],weight:0.10},
+  size_blend_age_growth_15:{fields:['tvl','age','growth'],weight:0.15},
+  size_blend_age_growth_20:{fields:['tvl','age','growth'],weight:0.20},
+  size_blend_age_growth_25:{fields:['tvl','age','growth'],weight:0.25},
+  size_blend_age_growth_50:{fields:['tvl','age','growth'],weight:0.50}
+ };
+ if(blends[name]){
+  const {fields,weight}=blends[name];
+  const curve=fitSizeCurve(rows),featureModel=fitHuber(rows,fields);
+  const beta=featureModel.parameters.coefficients;
+  const slope=(1-weight)*curve.slope+weight*beta[1];
+  const intercept=(1-weight)*curve.intercept+weight*(beta[0]-beta[1]*Math.log(50000000));
+  return {
+   predict:(p:any)=>(1-weight)*curve.predict(p)+weight*featureModel.predict(p),
+   slope,intercept,
+   parameters:{fields,coefficients:beta,blend_weight:weight,slope,intercept}
+  };
+ }
  const curve=fitSizeCurve(rows);
  const categories=new Map<string,{count:number,bias:number}>();
  const names=new Set(rows.map(p=>p.category||''));
@@ -148,7 +169,7 @@ const comparable=snapshot.protocols.filter((p:any)=>
 );
 const dated=[...comparable].filter((p:any)=>p.listed_at)
  .sort((a:any,b:any)=>a.listed_at.localeCompare(b.listed_at)||a.slug.localeCompare(b.slug));
-const variants=['flat','ratio','size_curve','size_age','size_growth','size_age_growth','size_category'];
+const variants=['flat','ratio','size_curve','size_age','size_growth','size_age_growth','size_blend_growth_25','size_blend_growth_50','size_blend_age_growth_10','size_blend_age_growth_15','size_blend_age_growth_20','size_blend_age_growth_25','size_blend_age_growth_50','size_category'];
 const errors=new Map<string,number[]>();
 for(const name of variants)errors.set(name,[]);
 const foldSize=Math.max(5,Math.floor(dated.length*0.1));
@@ -165,10 +186,11 @@ for(let fold=0;fold<5;fold++){
 const validation=variants.map(name=>({name,...modelMetrics(errors.get(name)!)}));
 const selectable=validation.filter(v=>!['flat'].includes(v.name));
 const best=selectable.reduce((a,b)=>b.mae_log<a.mae_log?b:a,selectable[0]);
-const complexity:any={ratio:0,size_curve:1,size_category:2,size_age:2,size_growth:2,size_age_growth:3};
-const chosen=selectable
- .filter(v=>v.mae_log<=best.mae_log+0.03)
- .sort((a,b)=>(complexity[a.name]-complexity[b.name])||a.mae_log-b.mae_log)[0]?.name||'size_curve';
+const complexity:any={ratio:0,size_curve:1,size_blend_growth_25:1.5,size_growth:2,size_blend_growth_50:2,size_category:2,size_age:2,size_blend_age_growth_25:2.5,size_age_growth:3,size_blend_age_growth_50:3};
+const withinTolerance=selectable.filter(v=>v.mae_log<=best.mae_log+0.03);
+const ageGrowthBlend=withinTolerance.filter(v=>v.name.startsWith('size_blend_age_growth_')).sort((a,b)=>a.mae_log-b.mae_log)[0];
+const chosen=ageGrowthBlend?.name||withinTolerance
+ .sort((a,b)=>(complexity[a.name]??4)-(complexity[b.name]??4)||a.mae_log-b.mae_log)[0]?.name||'size_curve';
 const model=fitModel(chosen,comparable);
 const oof=errors.get(chosen)||[];
 const intervalFactor=Math.exp(quantile(oof.map(v=>Math.abs(v)),0.8));

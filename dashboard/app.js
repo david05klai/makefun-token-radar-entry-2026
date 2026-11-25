@@ -3,7 +3,7 @@ const $=id=>document.getElementById(id);
 const escapeHtml=value=>String(value??'').replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
 const money=value=>new Intl.NumberFormat('en-US',{style:'currency',currency:'USD',notation:'compact',maximumFractionDigits:2}).format(Number(value)||0);
 const percent=value=>value==null?'—':(value>=0?'+':'')+Number(value).toFixed(1)+'%';
-const labelMap={size_curve:'Robust size curve',size_age:'TVL + age',size_growth:'TVL + weekly change',size_age_growth:'TVL + age + weekly change',size_category:'TVL + shrunken category residual',ratio:'Fixed cap / TVL multiple',flat:'Flat market-cap baseline'};
+const labelMap={size_curve:'Robust size curve',size_age:'TVL + age',size_growth:'TVL + weekly change',size_age_growth:'TVL + age + weekly change',size_blend_growth_25:'75% size curve + 25% growth fit',size_blend_growth_50:'50% size curve + 50% growth fit',size_blend_age_growth_10:'90% size curve + 10% age / growth fit',size_blend_age_growth_15:'85% size curve + 15% age / growth fit',size_blend_age_growth_20:'80% size curve + 20% age / growth fit',size_blend_age_growth_25:'75% size curve + 25% age / growth fit',size_blend_age_growth_50:'50% size curve + 50% age / growth fit',size_category:'TVL + shrunken category residual',ratio:'Fixed cap / TVL multiple',flat:'Flat market-cap baseline'};
 let limit=10;
 let auditLimit=20;
 
@@ -30,10 +30,10 @@ for(const category of [...new Set(data.rows.map(row=>row.category).filter(Boolea
  const option=document.createElement('option');option.value=category;option.textContent=category;$('category').append(option)
 }
 const modelName=labelMap[stats.selected_model]||stats.selected_model;
- $('model-summary').textContent=modelName+' selected from '+stats.dated_comparable_count+' dated records; '+stats.comparable_count+' positive cap / TVL peers train the final fit. Age and 7-day change are evaluated as terms and retained only when held-out error supports them.';
+$('model-summary').textContent=modelName+' selected from '+stats.dated_comparable_count+' dated records; '+stats.comparable_count+' positive cap / TVL peers train the final fit. A conservative age / growth blend is retained only when its held-out error stays within 0.03 of the best fit.';
 const parameters=stats.model_parameters||{};
 const slope=parameters.slope;
-$('formula').textContent=slope==null?'Robust scenario fit · '+modelName:'ln(market cap) = intercept + '+Number(slope).toFixed(3)+' × ln(TVL)';
+$('formula').textContent=Array.isArray(parameters.fields)?'Blended robust fit · '+modelName+' · '+Math.round(Number(parameters.blend_weight)*100)+'% age / growth adjustment':slope==null?'Robust scenario fit · '+modelName:'ln(market cap) = intercept + '+Number(slope).toFixed(3)+' × ln(TVL)';
 $('hero-model').textContent=modelName;
 const leadScenario=data.rows[0];
 if(leadScenario){
@@ -73,7 +73,7 @@ function renderHeroChart(){
 renderHeroChart();
 $('validation-rows').innerHTML=stats.validation.map(row=>{
  const selected=row.name===stats.selected_model;
- return '<tr class="'+(selected?'selected-model':'')+'"><td>'+escapeHtml(labelMap[row.name]||row.name)+(selected?' <span class="selected-tag">selected</span>':'')+'</td><td>'+Number(row.n).toLocaleString('en-US')+'</td><td>'+escapeHtml(row.median_factor_error)+'×</td><td>'+escapeHtml(row.within_2x_percent)+'%</td></tr>';
+ return '<tr class="'+(selected?'selected-model':'')+'"><td>'+escapeHtml(labelMap[row.name]||row.name)+(selected?' <span class="selected-tag">selected</span>':'')+'</td><td>'+Number(row.n).toLocaleString('en-US')+'</td><td>'+Number(row.mae_log).toFixed(2)+'</td><td>'+escapeHtml(row.median_factor_error)+'×</td><td>'+escapeHtml(row.within_2x_percent)+'%</td></tr>';
 }).join('');
 
 function visibleRows(){
@@ -141,9 +141,12 @@ function detail(slug){
  const growthError=byName.size_growth?.mae_log;
  const ageError=byName.size_age?.mae_log;
  const combinedError=byName.size_age_growth?.mae_log;
- const validationNote=stats.selected_model==='size_curve'&&[curveError,growthError,ageError,combinedError].every(Number.isFinite)
-  ?'Across '+stats.chosen_validation.n+' out-of-fold records, the size curve had '+Number(curveError).toFixed(2)+' mean absolute log error; adding weekly change scored '+Number(growthError).toFixed(2)+', age '+Number(ageError).toFixed(2)+', and both '+Number(combinedError).toFixed(2)+'. The selected value therefore uses TVL without an unsupported age or growth premium.'
-  :'The validation table shows how age and weekly change affected held-out fit; the selected model uses only the terms its out-of-fold results support.';
+ const gap=stats.chosen_validation.mae_log-Math.min(...stats.validation.filter(item=>item.name!=='flat').map(item=>item.mae_log));
+ const validationNote=stats.selected_model.startsWith('size_blend_age_growth_')
+  ?'The selected value blends a robust fit on TVL, tracking age and 7-day change with the size curve at '+Math.round(Number(stats.model_parameters.blend_weight)*100)+'% weight. Its mean absolute log error is '+Number(stats.chosen_validation.mae_log).toFixed(2)+', '+gap.toFixed(3)+' above the best fit and inside the 0.03 tolerance.'
+  :stats.selected_model==='size_curve'&&[curveError,growthError,ageError,combinedError].every(Number.isFinite)
+   ?'Across '+stats.chosen_validation.n+' out-of-fold records, the size curve had '+Number(curveError).toFixed(2)+' mean absolute log error; adding weekly change scored '+Number(growthError).toFixed(2)+', age '+Number(ageError).toFixed(2)+', and both '+Number(combinedError).toFixed(2)+'. The selected value therefore uses TVL without an unsupported age or growth premium.'
+   :'The validation table shows how age and weekly change affected held-out fit; the selected model uses only the terms its out-of-fold results support.';
  $('detail-content').innerHTML='<h2 class="detail-title">'+escapeHtml(row.name)+'</h2>'+
   '<p class="detail-copy">'+escapeHtml(row.category||'Unclassified')+' · '+escapeHtml((row.chains||[]).join(', ')||'Network not recorded')+' · snapshot '+escapeHtml(data.as_of)+'</p>'+
   '<div class="detail-metrics"><div><span>Scenario market cap</span><strong>'+money(row.implied_value_usd)+'</strong></div>'+
