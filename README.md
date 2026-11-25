@@ -17,6 +17,7 @@ Atlas scans the competition's sealed DefiLlama snapshot and ranks protocols by a
 - Expanding-window comparisons against a fixed multiple and variants that add age, weekly change or category residuals. Only the simplest size curve is kept when extra terms fail to improve out-of-fold error.
 - A wide residual interval, because this one-snapshot model is uncertain; category token-record share is descriptive and never presented as launch probability.
 - A category-aware research plan with $0 budget. It tells readers to skip transfers, spending signatures and fees.
+- Each plan checks published reward terms, eligibility, minimum assets and fees before counting any route as free; when the only route requires capital, gas or spending permission, it says to stop.
 
 The input is frozen at 2026-11-14. “No token recorded” describes that source record only; it is not proof of current token status. Values are not token-price, airdrop or eligibility forecasts.
 

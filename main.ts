@@ -221,24 +221,26 @@ const auditCounts:any={};
 for(const row of universe)auditCounts[row.status]=(auditCounts[row.status]||0)+1;
 function categoryAction(category:string):string {
  const c=(category||'').toLowerCase();
+ if(c.includes('risk curator'))return 'Read the curator’s current market table, collateral limits, utilization, fee schedule, timelock and withdrawal path; do not supply or borrow.';
  if(c.includes('lend'))return 'Read supply caps, utilization, collateral rules, liquidation thresholds, withdrawal delays and every fee; do not deposit or borrow.';
- if(c.includes('dex'))return 'Inspect the swap interface and its route, price impact, minimum received and fee schedule without approving a token or sending a swap.';
- if(c.includes('yield')||c.includes('farm'))return 'Read the strategy, underlying assets, withdrawal queue, deposit caps and fee schedule; do not deposit into a vault.';
- if(c.includes('curator'))return 'Identify the host lending market, curator mandate, accepted collateral and withdrawal controls; observe without providing liquidity.';
+ if(c.includes('dex'))return 'Inspect the pool or market list, route, fee schedule and transaction requirements read-only; do not swap, stake, add liquidity or sign.';
+ if(c.includes('yield')||c.includes('farm')||c.includes('allocator'))return 'Read the vault strategy, underlying assets, reward terms, withdrawal queue, deposit caps and fees; do not deposit.';
+ if(c.includes('curator'))return 'Identify the host market, curator mandate, accepted collateral, caps and withdrawal controls; observe without providing liquidity.';
  if(c.includes('cdp'))return 'Read collateral ratios, liquidation penalties, debt costs and redemption rules; do not open a position.';
- if(c.includes('rwa'))return 'Verify issuer, legal eligibility, redemption process, custody and transfer restrictions before treating any campaign as accessible.';
+ if(c.includes('rwa'))return 'Verify issuer, jurisdiction and KYC eligibility, redemption process, custody, minimum balance and transfer restrictions before counting an incentive as accessible.';
  if(c.includes('derivative')||c.includes('basis'))return 'Read funding, liquidation, oracle and settlement rules; inspect the interface without opening a position.';
  if(c.includes('prediction'))return 'Read the resolution source, close time, dispute period and settlement rules; do not place a trade.';
+ if(c.includes('restak')||c.includes('collateral'))return 'Check supported collateral, network/operator selection, delegation period, withdrawal delay, slashing and reward terms; do not stake.';
  return 'Read the product, chain support, access restrictions and withdrawal rules; inspect its public interface without connecting funds.';
 }
 function farmSteps(p:any):string[] {
  const category=p.category||'Unclassified';
  const chain=(p.chains||[])[0]||'a supported network';
  return [
-  'Verify '+p.name+' on its own documentation and official domain; this '+snapshot.as_of+' snapshot records no token, which is not proof. About 5 minutes, $0.',
-  'Check the official app for a dated points, quest or eligibility page. Record only explicitly free actions and their terms; do not connect a wallet or deposit. About 5–10 minutes, $0.',
-  'On '+chain+' ('+category+'), '+categoryAction(category)+' About 10 minutes, $0.',
-  'Cross-check any contract address against the official documentation and note the date. Skip transfers, swaps, bridges, staking, signatures that grant spending rights and every action with a fee. About 5 minutes, $0.'
+  'Open '+p.name+'’s official docs and confirm the live domain, supported network ('+chain+') and current token status. The '+snapshot.as_of+' snapshot only says DefiLlama recorded no token. 5 minutes, $0.',
+  'Read the official Rewards, Points or Campaign terms. Note the end date, region rules, required assets, minimum balance and gas; count a route as $0 only when its published terms require no deposit or transaction. 5 minutes, $0.',
+  'For '+category+': '+categoryAction(category)+' Keep this review read-only; if the only reward route needs capital, KYC, gas or spending permission, mark it capital-gated and stop. 10 minutes, $0.',
+  'If the official terms document a free action, follow only that published step and save its dated confirmation. Otherwise, do not connect a wallet; note the source and check official notices once a week. 3 minutes, $0.'
  ];
 }
 const candidates=universe.filter((u:any)=>u.status==='watchlist'||u.status==='discovery').map((u:any)=>u.protocol);

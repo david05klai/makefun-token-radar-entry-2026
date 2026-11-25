@@ -30,7 +30,7 @@ for(const category of [...new Set(data.rows.map(row=>row.category).filter(Boolea
  const option=document.createElement('option');option.value=category;option.textContent=category;$('category').append(option)
 }
 const modelName=labelMap[stats.selected_model]||stats.selected_model;
-$('model-summary').textContent=modelName+' selected from '+stats.dated_comparable_count+' dated records; '+stats.comparable_count+' positive cap / TVL peers train the final fit. Validation is descriptive, not a guarantee.';
+ $('model-summary').textContent=modelName+' selected from '+stats.dated_comparable_count+' dated records; '+stats.comparable_count+' positive cap / TVL peers train the final fit. Age and 7-day change are evaluated as terms and retained only when held-out error supports them.';
 const parameters=stats.model_parameters||{};
 const slope=parameters.slope;
 $('formula').textContent=slope==null?'Robust scenario fit · '+modelName:'ln(market cap) = intercept + '+Number(slope).toFixed(3)+' × ln(TVL)';
@@ -136,15 +136,24 @@ function detail(slug){
  $('detail-lane').textContent=row.watchlist?'Source watchlist':'Below-floor discovery';
  const share=(100*row.token_record_share).toFixed(1);
  const peerText=row.peer_count+' recorded-token comparables in '+escapeHtml(row.category||'Unclassified');
+ const byName=Object.fromEntries(stats.validation.map(item=>[item.name,item]));
+ const curveError=byName.size_curve?.mae_log;
+ const growthError=byName.size_growth?.mae_log;
+ const ageError=byName.size_age?.mae_log;
+ const combinedError=byName.size_age_growth?.mae_log;
+ const validationNote=stats.selected_model==='size_curve'&&[curveError,growthError,ageError,combinedError].every(Number.isFinite)
+  ?'Across '+stats.chosen_validation.n+' out-of-fold records, the size curve had '+Number(curveError).toFixed(2)+' mean absolute log error; adding weekly change scored '+Number(growthError).toFixed(2)+', age '+Number(ageError).toFixed(2)+', and both '+Number(combinedError).toFixed(2)+'. The selected value therefore uses TVL without an unsupported age or growth premium.'
+  :'The validation table shows how age and weekly change affected held-out fit; the selected model uses only the terms its out-of-fold results support.';
  $('detail-content').innerHTML='<h2 class="detail-title">'+escapeHtml(row.name)+'</h2>'+
   '<p class="detail-copy">'+escapeHtml(row.category||'Unclassified')+' · '+escapeHtml((row.chains||[]).join(', ')||'Network not recorded')+' · snapshot '+escapeHtml(data.as_of)+'</p>'+
   '<div class="detail-metrics"><div><span>Scenario market cap</span><strong>'+money(row.implied_value_usd)+'</strong></div>'+
   '<div><span>80% residual interval</span><strong>'+money(row.implied_low_usd)+'–'+money(row.implied_high_usd)+'</strong></div>'+
   '<div><span>TVL</span><strong>'+money(row.tvl_usd)+'</strong></div>'+
+  '<div><span>7-day TVL change</span><strong>'+percent(row.change_7d)+'</strong></div>'+
   '<div><span>Category comparables</span><strong>'+row.peer_count+'</strong></div>'+
   '<div><span>Token-record share</span><strong>'+share+'%</strong></div>'+
   '<div><span>Tracking age</span><strong>'+(row.age_days==null?'Unknown':row.age_days+' days')+'</strong></div></div>'+
-  '<section class="detail-copy"><h3>How to read the value</h3><p>'+escapeHtml(labelMap[row.model_name]||row.model_name)+' fit on '+escapeHtml(String(stats.comparable_count))+' protocols with a token identity, positive market cap and positive TVL. The category ratio '+Number(row.peer_cap_tvl).toFixed(2)+'× is shown as context; the fitted value uses the selected model.</p>'+
+  '<section class="detail-copy"><h3>How to read the value</h3><p>'+escapeHtml(labelMap[row.model_name]||row.model_name)+' fit on '+escapeHtml(String(stats.comparable_count))+' protocols with a token identity, positive market cap and positive TVL. The category ratio '+Number(row.peer_cap_tvl).toFixed(2)+'× is shown as context; the fitted value uses the selected model.</p><p>'+escapeHtml(validationNote)+'</p>'+
   '<p>The '+share+'% figure is the share of snapshot records in this category with a token identity. It is not a probability that this protocol will issue one. The snapshot carries no launch outcome or eligibility labels.</p>'+
   '<h3>Zero-spend research plan</h3><ol>'+(row.farm_steps||[]).map(step=>'<li>'+escapeHtml(step)+'</li>').join('')+'</ol>'+
   '<p class="notice">The snapshot records no token identity for this protocol. Verify its current status. No points, airdrop or reward is promised; every action requiring a transfer, spending signature or fee is out of scope.</p></section>';
