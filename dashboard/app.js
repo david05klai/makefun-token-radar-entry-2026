@@ -4,6 +4,85 @@ const escapeHtml=value=>String(value??'').replace(/[&<>"']/g,char=>({'&':'&amp;'
 const money=value=>new Intl.NumberFormat('en-US',{style:'currency',currency:'USD',notation:'compact',maximumFractionDigits:2}).format(Number(value)||0);
 const percent=value=>value==null?'—':(value>=0?'+':'')+Number(value).toFixed(1)+'%';
 const labelMap={size_curve:'Robust size curve',size_age:'TVL + age',size_growth:'TVL + weekly change',size_age_growth:'TVL + age + weekly change',size_blend_growth_25:'75% size curve + 25% growth fit',size_blend_growth_50:'50% size curve + 50% growth fit',size_blend_age_growth_10:'90% size curve + 10% age / growth fit',size_blend_age_growth_15:'85% size curve + 15% age / growth fit',size_blend_age_growth_20:'80% size curve + 20% age / growth fit',size_blend_age_growth_25:'75% size curve + 25% age / growth fit',size_blend_age_growth_50:'50% size curve + 50% age / growth fit',size_category:'TVL + shrunken category residual',ratio:'Fixed cap / TVL multiple',flat:'Flat market-cap baseline'};
+const planOverrides={
+ 'veda':{
+  title:'Vault points: $0 eligibility check',
+  status:'Veda is vault infrastructure. Its public vault UI can show partner points, while the documented user actions center on depositing and withdrawing assets; no capital-free points route is verified here.',
+  source:'Checked 2026-11-26 · docs.veda.tech/security-and-risk-controls/smart-contract-security · app.veda.tech',
+  steps:[
+   'Open Veda Earn and scan only the public vault rows marked with points. Record the vault, partner, supported asset, chain, campaign end date and eligibility terms without connecting a wallet. 5 minutes, $0.',
+   'Open the vault terms in Veda’s official docs and note deposit requirements, share-lock period, withdrawal delay and fees. Treat a points label as a capital route unless its terms explicitly say otherwise. 5 minutes, $0.',
+   'Veda documents deposit and withdrawal as the vault interaction. Do not approve, deposit or sign; the deposit would require assets and network gas, so it is outside a $0 plan. 4 minutes, $0.',
+   'Recheck that same vault’s published campaign next week. Record “no verified $0 route” unless an official term adds an accountless, no-fee action. 2 minutes, $0.'
+  ]
+ },
+ 'gauntlet':{
+  title:'Curated vaults: $0 risk review',
+  status:'Gauntlet-branded vaults deploy user assets and carry principal risk; its public disclaimer also describes possible withdrawal timelocks. No accountless reward route is verified in the reviewed terms.',
+  source:'Checked 2026-11-26 · storage.googleapis.com/gauntlet-public-web-assets/gauntlet-branded-vault-disclaimer-dec-2025.pdf',
+  steps:[
+   'Open Gauntlet’s public vault list and identify the named market, collateral asset, network and curator. Read the listing without connecting a wallet. 5 minutes, $0.',
+   'Read the linked vault disclosure for performance fees, withdrawal notice, lock period and loss/liquidation risk before considering any route. 5 minutes, $0.',
+   'A vault position requires deploying an asset and paying network gas; this is neither a $0 task nor a guaranteed reward. Do not approve, supply or sign. 3 minutes, $0.',
+   'Recheck official terms weekly. Record a free route only if a published campaign explicitly permits an accountless, no-fee action; otherwise record “no verified $0 route.” 2 minutes, $0.'
+  ]
+ },
+ 'usdd':{
+  title:'Existing token: $0 status check',
+  status:'USDD’s official docs describe an issued stablecoin, although this frozen DefiLlama row has no token identity. Keep it as a snapshot data-gap case, not an unissued-token lead.',
+  source:'Checked 2026-11-26 · docs.usdd.io/introduction · docs.usdd.io/user-guide/usdd-savings · docs.usdd.io/user-guide/psm-peg-stability-module',
+  steps:[
+   'Compare the frozen row with USDD’s current official introduction: it describes USDD as a stablecoin. Mark the missing snapshot token fields as a data gap and remove USDD from any live pre-token shortlist. 3 minutes, $0.',
+   'Read the USDD Savings guide. Its earn route connects a wallet and deposits USDD to mint sUSDD, so it needs token principal and a transaction; it is not a free farm. 3 minutes, $0.',
+   'Read the PSM guide before considering an exchange route: “zero fee” still requires stablecoins and network gas. With a $0 budget, do not connect, swap or sign. 3 minutes, $0.',
+   'Check official announcements weekly for an accountless, no-fee activity. Until terms document one, record “no verified $0 route”; no yield or reward is promised. 2 minutes, $0.'
+  ]
+ },
+ 'upshift':{
+  title:'Points route: deposit required',
+  status:'Upshift’s official guide says users deposit supported assets into vaults and receive shares; strategy rewards or points accrue to that funded route. No capital-free farming path is verified.',
+  source:'Checked 2026-11-26 · docs.upshift.finance/introduction/how-it-works · docs.upshift.finance/rest-api/institutional',
+  steps:[
+   'Open Upshift’s public vault list and read the points or reward configuration for each candidate vault. Note asset, chain, curator, fees, withdrawal terms and campaign end date; do not connect a wallet. 5 minutes, $0.',
+   'The official flow starts with depositing a supported asset and receiving vault shares. Treat points tied to that position as requiring principal, execution gas and market-risk acceptance. 3 minutes, $0.',
+   'Read the selected vault’s fee, allocation and redemption information before classifying it. With no capital, stop at the public research step; do not approve or deposit. 5 minutes, $0.',
+   'Recheck the official campaign terms next week. Count a route only if the terms explicitly add a free, no-wallet task; otherwise record “no verified $0 route.” 2 minutes, $0.'
+  ]
+ },
+ 'onre':{
+  title:'Points route: ONyc exposure required',
+  status:'OnRe’s official docs describe ONyc as a yield-bearing asset and award points for holding or deploying ONyc. That product asset does not by itself prove a separate governance token; earning points still requires funded exposure.',
+  source:'Checked 2026-11-26 · docs.onre.finance/onyc-in-defi/onre-points-program · docs.onre.finance/legal',
+  steps:[
+   'Read OnRe’s Points Program and note its daily snapshot time, base holding rate, partner multipliers and campaign terms. The official formula uses ONyc balance and time; review it without connecting a wallet. 5 minutes, $0.',
+   'Check each supported venue’s current terms, chain, fees, KYC/eligibility rules and redemption path. The docs identify ONyc as a yield-bearing asset; do not confuse it with proof of a separate protocol-governance token. 5 minutes, $0.',
+   'Points require holding or deploying ONyc, so the documented route requires capital and gas; leveraged or LP multipliers add risk. Do not buy, deposit, borrow or sign. 3 minutes, $0.',
+   'Recheck the official points terms next week. Record “no verified $0 route” unless a published campaign adds a no-wallet task; do not promise points or a future reward. 2 minutes, $0.'
+  ]
+ },
+ 'symbiotic':{
+  title:'Points route: collateral required',
+  status:'Symbiotic’s official points terms tie points to vault collateral deposits and, in Season 2, delegation to secure networks. No $0 points route is documented.',
+  source:'Checked 2026-11-26 · docs.symbiotic.fi/get-started/resources/points-program · docs.symbiotic.fi/learn/core-concepts/vault',
+  steps:[
+   'Read the official Points Program terms and note which vaults and networks qualify, the current season rules and any cutoff. Points are calculated from collateral allocated to adapters; do not treat a public points page as a free task. 5 minutes, $0.',
+   'For each qualifying vault, read its collateral token, access policy, epoch length, slashing rules and withdrawal timing. The vault docs say collateral is deposited and may remain slashable until the next epoch boundary. 6 minutes, $0.',
+   'Points require collateral; delegation and points viewing may also require a connected wallet. With a $0 budget, do not connect, deposit, delegate or sign. 2 minutes, $0.',
+   'Recheck the official season terms next week and record “no verified $0 route” unless a documented accountless task appears. 2 minutes, $0.'
+  ]
+ },
+ 'bittensor-dtao':{
+  title:'Existing subnet tokens: $0 status check',
+  status:'Bittensor documentation describes TAO and a distinct alpha token for each subnet. Staking dTAO swaps TAO for subnet alpha, so this row is not an unissued-token farm.',
+  source:'Checked 2026-11-26 · bittensor.com/docs/concepts/emissions · bittensor.com/docs/concepts/staking-pools',
+  steps:[
+   'Read the official emissions guide and identify the subnet’s alpha token alongside TAO. The frozen snapshot’s blank token fields do not establish that this network has no token; mark it “existing token system.” 4 minutes, $0.',
+   'Read the staking-pools guide to see how staking swaps TAO for subnet alpha and exposes the position to pool price and fees. This route needs capital and is not free farming. 4 minutes, $0.',
+   'For a $0 plan, review the public subnet and emissions tables only. Do not stake, trade, register a subnet or sign a transaction. 5 minutes, $0.',
+   'Check official emissions and network notices weekly for a documented accountless task. Otherwise record “no verified $0 route” and exclude it from unissued-token leads. 2 minutes, $0.'
+  ]
+ }
+};
 let limit=10;
 let auditLimit=20;
 
@@ -112,7 +191,7 @@ function renderBoard(){
  $('rows').innerHTML=rows.slice(0,limit).map(row=>{
   const network=chainLabel(row);
   const share=(100*row.token_record_share).toFixed(0)+'%';
-  return '<tr><td><span class="rank">'+String(row.rank).padStart(3,'0')+'</span><strong>'+escapeHtml(row.name)+'</strong><small>'+(row.watchlist?'Source watchlist':'Below-floor discovery')+' · '+escapeHtml(row.slug)+'</small></td>'+
+  return '<tr><td><span class="rank">'+String(row.rank).padStart(3,'0')+'</span><strong>'+escapeHtml(row.name)+'</strong><small>'+(row.watchlist?'Source watchlist':'Below-floor discovery')+(planOverrides[row.slug]?' · official terms reviewed':'')+' · '+escapeHtml(row.slug)+'</small></td>'+
    '<td>'+escapeHtml(row.category||'Unclassified')+'</td><td title="'+escapeHtml(network.full)+'"><span class="tag">'+escapeHtml(network.primary)+(network.extras?' +'+network.extras:'')+'</span></td>'+
    '<td>'+money(row.tvl_usd)+'</td><td class="value">'+money(row.implied_value_usd)+'<small>'+money(row.implied_low_usd)+'–'+money(row.implied_high_usd)+' interval</small></td>'+
    '<td>'+share+'<small>category record share</small></td><td>'+percent(row.change_7d)+'</td>'+
@@ -137,6 +216,7 @@ function renderAudit(){
 function detail(slug){
  const row=data.rows.find(item=>item.slug===slug);
  if(!row)return;
+ const plan=planOverrides[row.slug];
  $('detail-lane').textContent=row.watchlist?'Source watchlist':'Below-floor discovery';
  const share=(100*row.token_record_share).toFixed(1);
  const peerText=row.peer_count+' recorded-token comparables in '+escapeHtml(row.category||'Unclassified');
@@ -162,7 +242,7 @@ function detail(slug){
   '<div><span>Tracking age</span><strong>'+(row.age_days==null?'Unknown':row.age_days+' days')+'</strong></div></div>'+
   '<section class="detail-copy"><h3>How to read the value</h3><p>'+escapeHtml(labelMap[row.model_name]||row.model_name)+' fit on '+escapeHtml(String(stats.comparable_count))+' protocols with a token identity, positive market cap and positive TVL. The category ratio '+Number(row.peer_cap_tvl).toFixed(2)+'× is shown as context; the fitted value uses the selected model.</p><p>'+escapeHtml(validationNote)+'</p>'+
   '<p>The '+share+'% figure is the share of snapshot records in this category with a token identity. It is not a probability that this protocol will issue one. The snapshot carries no launch outcome or eligibility labels.</p>'+
-  '<h3>Zero-spend research plan</h3><ol>'+(row.farm_steps||[]).map(step=>'<li>'+escapeHtml(step)+'</li>').join('')+'</ol>'+
+  '<h3>'+escapeHtml(plan?.title||'Zero-spend research plan')+'</h3>'+(plan?'<p class="plan-status">'+escapeHtml(plan.status)+'<br><small>Official references, checked '+escapeHtml(plan.source.slice('Checked 2026-11-26 · '.length))+'</small></p>':'')+'<ol>'+(plan?.steps||row.farm_steps||[]).map(step=>'<li>'+escapeHtml(step)+'</li>').join('')+'</ol>'+
   '<p class="notice">The snapshot records no token identity for this protocol. Verify its current status. No points, airdrop or reward is promised; every action requiring a transfer, spending signature or fee is out of scope.</p></section>';
  $('detail').showModal();
 }
