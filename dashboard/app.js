@@ -51,6 +51,7 @@ const planOverrides={
  },
  'usdd':{
   title:'Existing token: $0 status check',
+  rowTag:'Existing stablecoin · snapshot identity gap',
   status:'USDD’s official docs describe an issued stablecoin, although this frozen DefiLlama row has no token identity. Keep it as a snapshot data-gap case, not an unissued-token lead.',
   source:'Checked 2026-11-26 · docs.usdd.io/introduction · docs.usdd.io/user-guide/usdd-savings · docs.usdd.io/user-guide/psm-peg-stability-module',
   steps:[
@@ -84,6 +85,7 @@ const planOverrides={
  },
  'onre':{
   title:'Points route: ONyc exposure required',
+  rowTag:'ONyc asset · protocol token unverified',
   status:'OnRe’s official docs describe ONyc as a yield-bearing asset and award points for holding or deploying ONyc. That product asset does not by itself prove a separate governance token; earning points still requires funded exposure.',
   source:'Checked 2026-11-26 · docs.onre.finance/onyc-in-defi/onre-points-program · docs.onre.finance/legal',
   steps:[
@@ -117,6 +119,7 @@ const planOverrides={
  },
  'bittensor-dtao':{
   title:'Existing subnet tokens: $0 status check',
+  rowTag:'Subnet alpha tokens exist · snapshot gap',
   status:'Bittensor documentation describes TAO and a distinct alpha token for each subnet. Staking dTAO swaps TAO for subnet alpha, so this row is not an unissued-token farm.',
   source:'Checked 2026-11-26 · bittensor.com/docs/concepts/emissions · bittensor.com/docs/concepts/staking-pools',
   steps:[
@@ -235,7 +238,8 @@ function renderBoard(){
  $('rows').innerHTML=rows.slice(0,limit).map(row=>{
   const network=chainLabel(row);
   const share=(100*row.token_record_share).toFixed(0)+'%';
-  return '<tr><td><span class="rank">'+String(row.rank).padStart(3,'0')+'</span><strong>'+escapeHtml(row.name)+'</strong><small>'+(row.watchlist?'Source watchlist':'Below-floor discovery')+(planOverrides[row.slug]?' · official terms reviewed':'')+' · '+escapeHtml(row.slug)+'</small></td>'+
+  const reviewTag=planOverrides[row.slug]?.rowTag||(planOverrides[row.slug]?'Official terms reviewed':'');
+  return '<tr><td><span class="rank">'+String(row.rank).padStart(3,'0')+'</span><strong>'+escapeHtml(row.name)+'</strong><small>'+(row.watchlist?'Source watchlist':'Below-floor discovery')+(reviewTag?' · '+escapeHtml(reviewTag):'')+' · '+escapeHtml(row.slug)+'</small></td>'+
    '<td>'+escapeHtml(row.category||'Unclassified')+'</td><td title="'+escapeHtml(network.full)+'"><span class="tag">'+escapeHtml(network.primary)+(network.extras?' +'+network.extras:'')+'</span></td>'+
    '<td>'+money(row.tvl_usd)+'</td><td class="value">'+money(row.implied_value_usd)+'<small>'+money(row.implied_low_usd)+'–'+money(row.implied_high_usd)+' interval</small></td>'+
    '<td>'+share+'<small>category record share</small></td><td>'+percent(row.change_7d)+'</td>'+
