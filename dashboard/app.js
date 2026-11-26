@@ -27,6 +27,28 @@ const planOverrides={
    'Recheck official terms weekly. Record a free route only if a published campaign explicitly permits an accountless, no-fee action; otherwise record “no verified $0 route.” 2 minutes, $0.'
   ]
  },
+ 'rockawayx':{
+  title:'Curated vaults: $0 eligibility check',
+  status:'RockawayX’s own vault launch guide says users deposit USDC or wETH and receive vault shares; redemption depends on liquidity across underlying markets. That is a funded yield position, not a capital-free farm.',
+  source:'Checked 2026-11-26 · rockawayx.com/insights/rockawayx-launches-three-curated-vaults-on-morpho · docs.morpho.org/get-started/resources/apps/vault',
+  steps:[
+   'Open RockawayX’s public Morpho curator page and record the vault, chain, accepted asset, current exposure, available liquidity and curator fee. Read without connecting a wallet. 5 minutes, $0.',
+   'Read RockawayX’s vault guide and Morpho’s vault instructions. Compare the collateral markets and redemption conditions; note that exits depend on liquidity across the underlying markets. 5 minutes, $0.',
+   'The documented route deposits USDC or wETH and incurs network costs; it can lose principal. With a $0 budget, do not approve, deposit or sign. 3 minutes, $0.',
+   'Recheck official campaign terms next week. Count a route only if a published offer adds a no-wallet, no-fee task; otherwise record “no verified $0 route.” 2 minutes, $0.'
+  ]
+ },
+ 'hyperithm':{
+  title:'Curated vaults: $0 eligibility check',
+  status:'Morpho’s official curator page lists Hyperithm vaults, while its vault guide says users deposit an asset to earn the curator-managed strategy yield. No capital-free reward route is verified.',
+  source:'Checked 2026-11-26 · app.morpho.org/curator/hyperithm · docs.morpho.org/get-started/resources/apps/vault',
+  steps:[
+   'Open Hyperithm’s official Morpho curator page and record each vault’s network, deposit asset, curator and current market exposure. Do not connect a wallet. 5 minutes, $0.',
+   'Use Morpho’s vault guide to check the market risk, fee and withdrawal conditions for the selected vault. Treat any token reward as conditional on its published funded position. 5 minutes, $0.',
+   'Vault yield requires an asset deposit and network transaction. Under a $0 plan, do not approve, supply or sign; record the vault as capital-gated. 3 minutes, $0.',
+   'Recheck the official curator page weekly for a separately documented free task. If none is listed, record “no verified $0 route.” 2 minutes, $0.'
+  ]
+ },
  'usdd':{
   title:'Existing token: $0 status check',
   status:'USDD’s official docs describe an issued stablecoin, although this frozen DefiLlama row has no token identity. Keep it as a snapshot data-gap case, not an unissued-token lead.',
@@ -49,6 +71,17 @@ const planOverrides={
    'Recheck the official campaign terms next week. Count a route only if the terms explicitly add a free, no-wallet task; otherwise record “no verified $0 route.” 2 minutes, $0.'
   ]
  },
+ 'opentrade':{
+  title:'RWA vaults: $0 terms check',
+  status:'OpenTrade describes yield vaults backed by portfolios of money-market, treasury, bond-fund or onchain assets; liquidity terms vary by vault. The published product is a funded yield route, not a verified free task.',
+  source:'Checked 2026-11-26 · opentrade.io/vaults',
+  steps:[
+   'Open OpenTrade’s public vault catalogue and record each vault’s strategy, currency, risk description and liquidity terms. Keep the review read-only; do not connect a wallet. 5 minutes, $0.',
+   'For a candidate vault, read the official terms for underlying assets, fees and redemption timing. The site says vault rates vary with the portfolio and some products use notice periods. 5 minutes, $0.',
+   'Earning through a vault requires a funded balance and may involve product eligibility. With a $0 budget, do not subscribe, transfer assets or sign. 3 minutes, $0.',
+   'Recheck the official catalogue next week. Record “no verified $0 route” unless OpenTrade publishes an accountless, no-fee task. 2 minutes, $0.'
+  ]
+ },
  'onre':{
   title:'Points route: ONyc exposure required',
   status:'OnRe’s official docs describe ONyc as a yield-bearing asset and award points for holding or deploying ONyc. That product asset does not by itself prove a separate governance token; earning points still requires funded exposure.',
@@ -58,6 +91,17 @@ const planOverrides={
    'Check each supported venue’s current terms, chain, fees, KYC/eligibility rules and redemption path. The docs identify ONyc as a yield-bearing asset; do not confuse it with proof of a separate protocol-governance token. 5 minutes, $0.',
    'Points require holding or deploying ONyc, so the documented route requires capital and gas; leveraged or LP multipliers add risk. Do not buy, deposit, borrow or sign. 3 minutes, $0.',
    'Recheck the official points terms next week. Record “no verified $0 route” unless a published campaign adds a no-wallet task; do not promise points or a future reward. 2 minutes, $0.'
+  ]
+ },
+ 'curvance':{
+  title:'Rewards: verify terms before any action',
+  status:'Curvance’s general Rewards Terms say programs can require specified balances, activities or verification; rewards may have no cash value and may be changed or suspended. No accountless, no-fee route is verified here.',
+  source:'Checked 2026-11-26 · curvance.com/terms-of-use · curvance.com',
+  steps:[
+   'Open Curvance’s official Rewards Terms and the current program page. Record the specific campaign, eligibility, minimum balance or activity, end date and regional restrictions. 5 minutes, $0.',
+   'Check whether the chosen task is an offchain, no-wallet action. The general terms do not promise cash value; read any campaign-specific terms before treating it as a reward. 4 minutes, $0.',
+   'If the campaign requires supplying, borrowing, a balance, gas or a signature, it cannot be completed at $0. Do not connect, approve, deposit or sign. 3 minutes, $0.',
+   'Recheck official terms weekly; record “no verified $0 route” until a specific free action is published. 2 minutes, $0.'
   ]
  },
  'symbiotic':{
