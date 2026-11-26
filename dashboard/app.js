@@ -137,7 +137,6 @@ function renderAudit(){
 function detail(slug){
  const row=data.rows.find(item=>item.slug===slug);
  if(!row)return;
- const sourceUrl='https://defillama.com/protocol/'+encodeURIComponent(row.slug);
  $('detail-lane').textContent=row.watchlist?'Source watchlist':'Below-floor discovery';
  const share=(100*row.token_record_share).toFixed(1);
  const peerText=row.peer_count+' recorded-token comparables in '+escapeHtml(row.category||'Unclassified');
@@ -154,7 +153,6 @@ function detail(slug){
    :'The validation table shows how age and weekly change affected held-out fit; the selected model uses only the terms its out-of-fold results support.';
  $('detail-content').innerHTML='<h2 class="detail-title">'+escapeHtml(row.name)+'</h2>'+
   '<p class="detail-copy">'+escapeHtml(row.category||'Unclassified')+' · '+escapeHtml((row.chains||[]).join(', ')||'Network not recorded')+' · snapshot '+escapeHtml(data.as_of)+'</p>'+
-  '<p class="detail-source"><a href="'+escapeHtml(sourceUrl)+'" target="_blank" rel="noopener noreferrer">View live DeFiLlama profile ↗</a><span>Live values may differ; Atlas models the '+escapeHtml(data.as_of)+' snapshot.</span></p>'+
   '<div class="detail-metrics"><div><span>Scenario market cap</span><strong>'+money(row.implied_value_usd)+'</strong></div>'+
   '<div><span>80% residual interval</span><strong>'+money(row.implied_low_usd)+'–'+money(row.implied_high_usd)+'</strong></div>'+
   '<div><span>TVL</span><strong>'+money(row.tvl_usd)+'</strong></div>'+
